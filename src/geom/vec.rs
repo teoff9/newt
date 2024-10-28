@@ -1,5 +1,5 @@
 //27.10.24 by Matteo Fava
-use std::ops::{Add, Sub, Mul, Div};
+use std::ops::{Add, Sub, Mul, Div, AddAssign};
 use bevy::math::Vec3;
 
 
@@ -14,7 +14,7 @@ pub struct Vector {
 //METHODS
 impl Vector {
     pub fn new(x: f64, y: f64, z: f64) -> Self {
-        Self {x,y, z}
+        Self {x,y,z}
     }
     pub fn from(v: &Vector) -> Self {
         Vector {
@@ -23,14 +23,19 @@ impl Vector {
             z: v.z
         }
     }
-    fn x(&self) -> f64 {
-        self.x
+    pub fn zero() -> Self {
+        Vector {
+            x:0.0,y:0.0,z:0.0
+        }
     }
-    fn y(&self) -> f64 {
-        self.y
+    fn x(&self) -> &f64 {
+        &self.x
     }
-    fn z(&self) -> f64 {
-        self.z
+    fn y(&self) -> &f64 {
+        &self.y
+    }
+    fn z(&self) -> &f64 {
+        &self.z
     }
     pub fn to_unit(&self) -> Self {
         Vector::from(self) / self.module()
@@ -56,6 +61,16 @@ impl Add for Vector {
 
     fn add(self, rhs: Self) -> Self::Output {
         Vector {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z
+        }
+    }
+}
+
+impl AddAssign for Vector {
+    fn add_assign(&mut self, rhs: Self) {
+        *self = Self {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
             z: self.z + rhs.z

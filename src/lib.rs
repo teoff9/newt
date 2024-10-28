@@ -3,5 +3,5 @@
 
 pub mod bodies; //Bodies for simulations
 pub mod geom; //Geometry
-pub mod graphics; //Graphics with bevy
+pub mod sim; //Simulation related
 pub mod physics; //Physics related
