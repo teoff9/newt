@@ -1,4 +1,6 @@
 //27.10.24 by Matteo Fava
 
 pub mod point; //Point
-pub mod vector; //Vector
+pub mod vector; //Vector trait
+pub mod vector2;
+pub mod vector3;

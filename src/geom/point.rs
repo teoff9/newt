@@ -38,3 +38,37 @@ impl Point2D {
         self.y = xy.1;
     }
 }
+
+//Point 3D
+pub struct Point3D {
+    x: f64,
+    y: f64,
+    z: f64
+}
+
+impl Point for Point3D {
+    fn x(&self) -> f64 {
+        self.x
+    }
+    fn y(&self) -> f64 {
+        self.y
+    }
+    fn z(&self) -> f64 {
+        self.z
+    }
+}
+
+impl Point3D {
+    pub fn new(x: f64, y: f64, z:f64) -> Self {
+        Self {x,y,z}
+    }
+
+    pub fn from(xyz: (f64, f64, f64)) -> Self {
+        Self {x: xyz.0, y: xyz.1, z: xyz.2}
+    }
+    pub fn set_position(&mut self, xyz: (f64, f64, f64)) {
+        self.x = xyz.0;
+        self.y = xyz.1;
+        self.z = xyz.2;
+    }
+}
