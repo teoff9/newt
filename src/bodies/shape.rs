@@ -3,5 +3,5 @@
 //Shape
 #[derive(Debug)]
 pub enum Shape {
-    Sphere{r:f64}
+    Sphere { r: f64 },
 }

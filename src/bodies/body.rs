@@ -2,44 +2,49 @@
 use super::shape::Shape;
 use crate::geom::vec::Vector;
 
-//Body2D struct
+//Body struct
 #[derive(Debug)]
 pub struct Body {
     pos: Vector,
-    prev_pos: Vector, //needed for verlet integration
+    prev_pos: Vector,         //needed for verlet integration
+    velocity: Option<Vector>, //needed to start sim
     shape: Shape,
     mass: f64,
-    charge: f64,
-    accelleration: Vector,
-    is_static: bool
+    pub is_static: bool,
 }
 
 //IMPLEMENTATIONS
 impl Body {
-    pub fn new(pos: Vector, shape: Shape, mass: f64, charge: f64, is_static: bool) -> Self {
+    //New instance of Body
+    pub fn new(pos: Vector, v: Option<Vector>, shape: Shape, mass: f64, is_static: bool) -> Self {
         Self {
             pos,
             prev_pos: Vector::zero(),
+            velocity: v,
             shape,
             mass,
-            charge,
-            accelleration: Vector::zero(),
-            is_static
+            is_static,
         }
     }
+
+    //Borrow pos
     pub fn pos(&self) -> &Vector {
         &self.pos
     }
-    pub fn set_prev(&mut self, new_prev: Vector) {
-        self.prev_pos = new_prev;
+
+    //Borrow prev
+    pub fn prev(&self) -> &Vector {
+        &self.prev_pos
     }
-    pub fn update_pos(&mut self, new_pos: Vector) {
-        self.pos = new_pos;
-    }
-    //this method also set the previous pos
+
+    //Update position and previous position
     pub fn move_to(&mut self, new_pos: Vector) {
         self.prev_pos = self.pos;
         self.pos = new_pos;
     }
-    
+
+    //Borrow mass
+    pub fn mass(&self) -> &f64 {
+        &self.mass
+    }
 }
