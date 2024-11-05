@@ -6,8 +6,8 @@ use crate::geom::vec::Vector;
 #[derive(Debug)]
 pub struct Body {
     pos: Vector,
-    prev_pos: Vector,         //needed for verlet integration
-    velocity: Option<Vector>, //needed to start sim
+    prev_pos: Vector,
+    velocity: Option<Vector>,
     shape: Shape,
     mass: f64,
     pub is_static: bool,

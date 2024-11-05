@@ -1,28 +1,43 @@
 //31.10.24 by Matteo Fava
-use crate::{bodies::body::Body, geom::vec::Vector};
+use crate::{bodies::body::Body, geom::vec::Vector, sim::world::World};
+use std::{sync::{Arc, Mutex}, thread};
+use std::time::Duration;
+
+//2d or 3d
+#[derive(Debug)]
+enum Dimension {
+    TwoD,
+    ThreeD
+}
 
 //SIMULATION: this is the core of Newt
 #[derive(Debug)]
 pub struct Simulation {
-    pub bodies: Vec<Body>,
-    grav_field: Vector,
+    pub world: Arc<Mutex<World>>,
     dt: f64,
 }
 
 //IMPLEMENTATIONS
 impl Simulation {
-    //New instance of simulation
-    pub fn new(dt: f64, g: Vector) -> Self {
+    //New with
+    pub fn new_with(dt: f64, bodies: Vec<Body>, g: Vector) -> Self {
         Self {
-            bodies: vec![],
-            grav_field: g,
             dt,
+            world: Arc::new(Mutex::new(World::new(bodies, g)))
         }
     }
 
-    //add a body
-    pub fn add_body(&mut self, b: Body) {
-        self.bodies.push(b);
+    //New instance of simulation
+    pub fn new(dt: f64) -> Self {
+        Self {
+            world: Arc::new(Mutex::new(World::empty())),
+            dt
+        }
+    }
+
+    //add world method
+    pub fn add_world(&mut self, new_wrld: World) {
+        self.world.lock().expect("Can't lock world").replace(new_wrld);
     }
 
     //set the integration parameter
@@ -31,16 +46,7 @@ impl Simulation {
     }
 
     //start the physics simulation
-    pub fn start(&mut self) {
-        todo!()
-    }
-
-    //Uses Euler integration for first step if there's a body with v!=0
-    fn first_step(&mut self) {
-        todo!()
-    }
-    //normal step with Verlet integration
-    fn step(&mut self) {
+    pub fn run(&mut self, dim: Dimension) {
         todo!()
     }
 }
