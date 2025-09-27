@@ -1,6 +1,6 @@
 //27.10.24 by Matteo Fava
 use bevy::math::Vec3;
-use std::ops::{Add, AddAssign, Div, Mul, Sub};
+use std::{ops::{Add, AddAssign, Div, Mul, Sub}, iter::Sum};
 
 //Vector
 #[derive(Debug, Clone, Copy)]
@@ -40,6 +40,11 @@ impl Vector {
         (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
     }
 
+    //Module squared
+    pub fn module_sq(&self) -> f64 {
+        self.x * self.x + self.y * self.y + self.z * self.z
+    }
+
     //Convert Vector to Vec3 for bevy
     pub fn to_vec3(&self) -> Vec3 {
         Vec3::new(self.x as f32, self.y as f32, self.z as f32)
@@ -47,6 +52,12 @@ impl Vector {
 }
 
 //IMPLEMENTATIONS
+impl Sum for Vector {
+    fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
+        iter.fold(Vector::zero(), |a, b| a + b)
+    }
+}
+
 impl Add for Vector {
     type Output = Vector;
 

@@ -1,5 +1,5 @@
 //05.11.24 by Matteo Fava
-use crate::{bodies::body::Body, geom::vec::Vector};
+use crate::{bodies::body::Body, geom::vec::Vector, physics::gravity::grav_field};
 
 //World structs
 #[derive(Debug)]

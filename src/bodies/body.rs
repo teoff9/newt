@@ -47,4 +47,10 @@ impl Body {
     pub fn mass(&self) -> &f64 {
         &self.mass
     }
+
+    //Distance from another point
+    pub fn distance_squared(&self, pos: &Vector) -> f64 {
+        (self.pos - *pos).module_sq()
+    }
+
 }
