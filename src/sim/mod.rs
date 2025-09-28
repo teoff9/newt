@@ -1,4 +1,4 @@
 mod config;
-mod simulation;
+pub mod simulation;
 #[cfg(test)]
 mod test;
