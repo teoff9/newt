@@ -3,8 +3,6 @@ use std::fs;
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
-use crate::sim::simulation::Simulation;
-
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct Bodies {
     pub pos: Vec<[f64; 3]>,

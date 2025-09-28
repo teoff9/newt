@@ -86,11 +86,11 @@ impl Simulation {
     }
 
     pub fn total_kinetic(&self) -> f64 {
-        todo!()
-    }
-
-    pub fn total_angular_mom(&self) -> f64 {
-        todo!()
+        let mut k = 0.0;
+        for i in 0..self.pos.len() {
+            k += 0.5 * self.mass[i] * self.vel[i].abs2();
+        }
+        k
     }
 
     //Run simulation with velocity verlet for n steps
@@ -110,7 +110,7 @@ impl Simulation {
         );
 
         //main loop
-        for i in 1..=self.steps {
+        for _ in 1..=self.steps {
             //Update positions
             update_pos(&mut self.pos, &self.vel, &acc_1, &self.dt, n);
 
@@ -134,20 +134,15 @@ impl Simulation {
 }
 
 #[inline]
-fn update_acc(
-    pos: &Vec<Vec3>,
-    mass: &Vec<f64>,
-    acc: &mut Vec<Vec3>,
-    g: &f64,
-    softening: &f64,
-    n: usize,
-) {
-    let mut a = Vec3::zero();
+fn update_acc(pos: &[Vec3], mass: &[f64], acc: &mut [Vec3], g: &f64, softening: &f64, n: usize) {
+    let mut a: Vec3;
+    let e = softening * softening;
     for i in 0..n {
+        a = Vec3::zero();
         for j in 0..n {
             if i != j {
-                a +=
-                    (pos[i] - pos[j]) * *g * mass[j] / ((pos[i] - pos[j]).abs() + softening).powi(3)
+                let r = pos[i] - pos[j];
+                a += r * *g * mass[j] / (r.abs2() + e).sqrt().powi(3);
             }
         }
         acc[i] = a;
@@ -155,7 +150,15 @@ fn update_acc(
 }
 
 #[inline]
-fn update_pos(pos: &mut Vec<Vec3>, vel: &Vec<Vec3>, acc: &Vec<Vec3>, dt: &f64, n: usize) {}
+fn update_pos(pos: &mut [Vec3], vel: &[Vec3], acc: &[Vec3], dt: &f64, n: usize) {
+    for i in 0..n {
+        pos[i] += vel[i] * *dt + 0.5 * acc[i] * *dt * *dt;
+    }
+}
 
 #[inline]
-fn update_vel(vel: &mut Vec<Vec3>, acc_1: &Vec<Vec3>, acc_2: &Vec<Vec3>, dt: &f64, n: usize) {}
+fn update_vel(vel: &mut [Vec3], acc_1: &[Vec3], acc_2: &[Vec3], dt: &f64, n: usize) {
+    for i in 0..n {
+        vel[i] += (acc_2[i] + acc_1[i]) * *dt * 0.5;
+    }
+}

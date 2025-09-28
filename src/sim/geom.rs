@@ -15,7 +15,11 @@ impl Vec3 {
     }
 
     pub fn abs(&self) -> f64 {
-        (self[0].powi(2) + self[1].powi(2) + self[2].powi(2)).sqrt()
+        (self[0] * self[0] + self[1] * self[1] + self[2] * self[2]).sqrt()
+    }
+
+    pub fn abs2(&self) -> f64 {
+        self[0] * self[0] + self[1] * self[1] + self[2] * self[2]
     }
 }
 
