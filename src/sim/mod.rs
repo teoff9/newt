@@ -1,4 +1,4 @@
 mod config;
+pub mod geom;
 pub mod simulation;
-#[cfg(test)]
 mod test;

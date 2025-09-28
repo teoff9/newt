@@ -1,4 +1,7 @@
-use crate::sim::config::{read_config, write_config, Bodies, Config};
+use crate::sim::{
+    config::{read_config, write_config, Bodies, Config},
+    geom::Vec3,
+};
 use anyhow::Result;
 use std::mem::swap;
 
@@ -8,8 +11,8 @@ pub struct Simulation {
     dt: f64,
     steps: i64,
     softening: f64,
-    pos: Vec<[f64; 3]>,
-    vel: Vec<[f64; 3]>,
+    pos: Vec<Vec3>,
+    vel: Vec<Vec3>,
     mass: Vec<f64>,
 }
 
@@ -20,8 +23,8 @@ impl Simulation {
             dt: c.dt,
             steps: c.steps,
             softening: c.softening,
-            pos: c.bodies.pos,
-            vel: c.bodies.vel,
+            pos: c.bodies.pos.iter().map(|v| Vec3::from(*v)).collect(),
+            vel: c.bodies.vel.iter().map(|v| Vec3::from(*v)).collect(),
             mass: c.bodies.mass,
         }
     }
@@ -38,8 +41,8 @@ impl Simulation {
             steps: self.steps,
             softening: self.softening,
             bodies: Bodies {
-                pos: self.pos.clone(),
-                vel: self.vel.clone(),
+                pos: self.pos.iter().map(|v| v.to_array()).collect(),
+                vel: self.vel.iter().map(|v| v.to_array()).collect(),
                 mass: self.mass.clone(),
             },
         };
@@ -51,8 +54,8 @@ impl Simulation {
         dt: f64,
         steps: i64,
         softening: f64,
-        pos: Vec<[f64; 3]>,
-        vel: Vec<[f64; 3]>,
+        pos: Vec<Vec3>,
+        vel: Vec<Vec3>,
         mass: Vec<f64>,
     ) -> Self {
         Self {
@@ -93,22 +96,36 @@ impl Simulation {
     //Run simulation with velocity verlet for n steps
     pub fn run(&mut self) {
         let n = self.pos.len(); //n bodies
-        let mut acc_1 = vec![[0.0; 3]; n]; //i acc
-        let mut acc_2 = vec![[0.0; 3]; n]; //i+1 acc
+        let mut acc_1 = vec![Vec3::zero(); n]; //i acc
+        let mut acc_2 = vec![Vec3::zero(); n]; //i+1 acc
 
         //calculate initial acc
-        update_acc(&self.pos, &self.mass, &mut acc_1, &self.g);
+        update_acc(
+            &self.pos,
+            &self.mass,
+            &mut acc_1,
+            &self.g,
+            &self.softening,
+            n,
+        );
 
         //main loop
         for i in 1..=self.steps {
             //Update positions
-            update_pos(&mut self.pos, &self.vel, &acc_1, &self.dt);
+            update_pos(&mut self.pos, &self.vel, &acc_1, &self.dt, n);
 
             //Calculate new accellerations
-            update_acc(&self.pos, &self.mass, &mut acc_2, &self.g);
+            update_acc(
+                &self.pos,
+                &self.mass,
+                &mut acc_2,
+                &self.g,
+                &self.softening,
+                n,
+            );
 
             //Update velocities
-            update_vel(&mut self.vel, &acc_1, &acc_2, &self.dt);
+            update_vel(&mut self.vel, &acc_1, &acc_2, &self.dt, n);
 
             //Swap acc_1 e acc_2
             swap(&mut acc_1, &mut acc_2);
@@ -116,8 +133,29 @@ impl Simulation {
     }
 }
 
-fn update_acc(pos: &Vec<[f64; 3]>, mass: &Vec<f64>, acc: &mut Vec<[f64; 3]>, g: &f64) {}
+#[inline]
+fn update_acc(
+    pos: &Vec<Vec3>,
+    mass: &Vec<f64>,
+    acc: &mut Vec<Vec3>,
+    g: &f64,
+    softening: &f64,
+    n: usize,
+) {
+    let mut a = Vec3::zero();
+    for i in 0..n {
+        for j in 0..n {
+            if i != j {
+                a +=
+                    (pos[i] - pos[j]) * *g * mass[j] / ((pos[i] - pos[j]).abs() + softening).powi(3)
+            }
+        }
+        acc[i] = a;
+    }
+}
 
-fn update_pos(pos: &mut Vec<[f64; 3]>, vel: &Vec<[f64; 3]>, acc: &Vec<[f64; 3]>, dt: &f64) {}
+#[inline]
+fn update_pos(pos: &mut Vec<Vec3>, vel: &Vec<Vec3>, acc: &Vec<Vec3>, dt: &f64, n: usize) {}
 
-fn update_vel(vel: &mut Vec<[f64; 3]>, acc_1: &Vec<[f64; 3]>, acc_2: &Vec<[f64; 3]>, dt: &f64) {}
+#[inline]
+fn update_vel(vel: &mut Vec<Vec3>, acc_1: &Vec<Vec3>, acc_2: &Vec<Vec3>, dt: &f64, n: usize) {}
