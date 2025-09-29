@@ -202,6 +202,7 @@ impl Simulation {
 
             //Swap acc_1 e acc_2
             swap(&mut acc_1, &mut acc_2);
+            acc_2.fill(Vec3::zero());
         }
     }
 }
@@ -211,14 +212,13 @@ fn update_acc(pos: &[Vec3], mass: &[f64], acc: &mut [Vec3], g: &f64, softening: 
     let mut a: Vec3;
     let e = softening * softening;
     for i in 0..n {
-        a = Vec3::zero();
-        for j in 0..n {
-            if i != j {
-                let r = pos[i] - pos[j];
-                a += r * *g * mass[j] / (r.abs2() + e).sqrt().powi(3);
-            }
+        for j in i + 1..n {
+            //dbg!((i, j));
+            let r = pos[i] - pos[j];
+            a = r * *g / (r.abs2() + e).sqrt().powi(3);
+            acc[i] += mass[j] * a;
+            acc[j] -= mass[i] * a;
         }
-        acc[i] = a;
     }
 }
 
