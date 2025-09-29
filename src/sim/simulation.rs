@@ -185,7 +185,7 @@ impl Simulation {
         //main loop
         for _ in 1..=self.steps {
             //Update positions
-            update_pos(&mut self.pos, &self.vel, &acc_1, &self.dt, n);
+            update_pos(&mut self.pos, &self.vel, &acc_1, &self.dt);
 
             //Calculate new accellerations
             update_acc(
@@ -198,7 +198,7 @@ impl Simulation {
             );
 
             //Update velocities
-            update_vel(&mut self.vel, &acc_1, &acc_2, &self.dt, n);
+            update_vel(&mut self.vel, &acc_1, &acc_2, &self.dt);
 
             //Swap acc_1 e acc_2
             swap(&mut acc_1, &mut acc_2);
@@ -211,9 +211,9 @@ impl Simulation {
 fn update_acc(pos: &[Vec3], mass: &[f64], acc: &mut [Vec3], g: &f64, softening: &f64, n: usize) {
     let mut a: Vec3;
     let e = softening * softening;
+
     for i in 0..n {
         for j in i + 1..n {
-            //dbg!((i, j));
             let r = pos[i] - pos[j];
             a = r * *g / (r.abs2() + e).sqrt().powi(3);
             acc[i] += mass[j] * a;
@@ -223,15 +223,15 @@ fn update_acc(pos: &[Vec3], mass: &[f64], acc: &mut [Vec3], g: &f64, softening: 
 }
 
 #[inline]
-fn update_pos(pos: &mut [Vec3], vel: &[Vec3], acc: &[Vec3], dt: &f64, n: usize) {
-    for i in 0..n {
-        pos[i] += vel[i] * *dt + 0.5 * acc[i] * *dt * *dt;
-    }
+fn update_pos(pos: &mut [Vec3], vel: &[Vec3], acc: &[Vec3], dt: &f64) {
+    pos.iter_mut()
+        .enumerate()
+        .for_each(|(i, p)| *p += vel[i] * *dt + 0.5 * acc[i] * *dt * *dt);
 }
 
 #[inline]
-fn update_vel(vel: &mut [Vec3], acc_1: &[Vec3], acc_2: &[Vec3], dt: &f64, n: usize) {
-    for i in 0..n {
-        vel[i] += (acc_2[i] + acc_1[i]) * *dt * 0.5;
-    }
+fn update_vel(vel: &mut [Vec3], acc_1: &[Vec3], acc_2: &[Vec3], dt: &f64) {
+    vel.iter_mut()
+        .enumerate()
+        .for_each(|(i, v)| *v += (acc_2[i] + acc_1[i]) * *dt * 0.5);
 }
