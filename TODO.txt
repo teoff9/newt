@@ -1,0 +1,5 @@
+Ripulire codice
+Scegliere parallelizzazione
+Strutturare meglio Simulation, dividendo?
+Gestire la parte grafica
+Introdurre nuovi modi di inizializzare il sistema da json
