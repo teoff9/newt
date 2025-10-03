@@ -62,10 +62,11 @@ impl<T: Float + AddAssign + SubAssign + MulAssign + Send + Sync + Half> System<T
             //Update velocities
             update_vel(&mut self.vel, &acc_1, &acc_2, &dt);
 
-            //Swap acc_1 e acc_2
+            //Swap acc_1 e acc_2, update t
             swap(&mut acc_1, &mut acc_2);
             acc_2.fill(Vec3::zero());
         }
+        self.t = dt * T::from(steps).unwrap();
     }
 }
 
