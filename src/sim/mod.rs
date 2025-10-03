@@ -1,4 +1,4 @@
-mod config;
 pub mod geom;
+pub mod sim_io;
 pub mod simulation;
-mod test;
+pub mod system;
