@@ -36,6 +36,10 @@ impl Simulation {
         Ok(Self::from_config(conf))
     }
 
+    pub fn system(&self) -> (Vec<Vec3>, Vec<Vec3>, Vec<f64>) {
+        (self.pos.clone(), self.vel.clone(), self.mass.clone())
+    }
+
     pub fn random_system(g: f64, dt: f64, steps: i64, n: usize, softening: f64, mass_r: (f64, f64), pos_r: [(f64, f64); 3], vel_r: Option<[(f64, f64); 3]>) -> Self {
         let mut rng = rng();
         let mut pos = vec![Vec3::zero(); n];
