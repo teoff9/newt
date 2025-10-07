@@ -9,10 +9,10 @@ use std::mem::swap;
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Simulation {
-    g: f64,
-    dt: f64,
-    steps: i64,
-    softening: f64,
+    pub g: f64,
+    pub dt: f64,
+    pub steps: i64,
+    pub softening: f64,
     pos: Vec<Vec3>,
     vel: Vec<Vec3>,
     mass: Vec<f64>,

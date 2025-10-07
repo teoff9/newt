@@ -1,5 +1,4 @@
-Ripulire codice
-Scegliere parallelizzazione
-Strutturare meglio Simulation, dividendo?
-Gestire la parte grafica
-Introdurre nuovi modi di inizializzare il sistema da json
+Implementa SystemX4 => controlla che funziona
+Capisci se fare Sim<f64x4, f64> oppure Sim<Sys>
+Rifinisci gli import ed export dei dati
+Elimina old Sim
